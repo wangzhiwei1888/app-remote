@@ -1,0 +1,95 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+	<meta charset="UTF-8">
+	<title>Document</title>
+</head>
+<body>
+	<!-- 
+<audio id="audio" src="./01.mp3"></audio>
+ -->
+<audio src="./music/01.mp3" controls="controls" id="audio" autoplay="autoplay">
+Your browser does not support the audio element.
+</audio>
+
+<script src="jquery.js"></script>
+<script src="/socket.io/socket.io.js"></script>
+<script>
+
+
+
+$(function(){
+
+	var musicList = [
+		{
+			src:'./music/01.mp3'
+		},
+		{
+			src:'./music/02.mp3'
+		},
+		{
+			src:'./music/03.mp3'
+		},
+		{
+			src:'./music/04.mp3'
+		},
+		{
+			src:'./music/05.mp3'
+		},
+		{
+			src:'./music/06.mp3'
+		},
+		{
+			src:'./music/07.mp3'
+		},
+		{
+			src:'./music/08.mp3'
+		},
+		{
+			src:'./music/09.mp3'
+		},
+		{
+			src:'./music/10.mp3'
+		}
+
+
+	]
+
+
+	// console.log(musicList[0].src)
+	function changeMusic(index){
+
+		console.log(index);
+		// var index = result.data;
+		console.log(musicList[index]);
+		$('#audio').attr('src',musicList[index].src);
+
+	}
+
+    var socket = io.connect('/');
+    socket.on('connect',function(){
+       // addMsg({msg:'连接成功'});
+       socket.send('连接成功');
+       console.log('connect success!!!');
+    })
+
+    //监听服务器发过来的消息
+    socket.on('message',function(data){
+     // console.log(data);
+     if(data.data != '连接成功')
+     {
+       // console.log(data);
+
+       changeMusic(data.data)
+
+     }
+        
+    })
+
+
+
+})
+</script>
+
+</body>
+</html>

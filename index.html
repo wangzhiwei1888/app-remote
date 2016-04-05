@@ -1,0 +1,169 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    
+    <title>Title</title>
+
+	<meta charset="UTF-8">
+  <meta content="width=device-width,initial-scale=1.0,maximum-scale=1.0,user-scalable=no" name="viewport">
+	<meta content="yes" name="apple-mobile-web-app-capable">
+	<meta content="black" name="apple-mobile-web-app-status-bar-style">
+	<meta content="telephone=no" name="format-detection">
+	<meta content="email=no" name="format-detection">
+
+    <link rel="stylesheet" href="bootstrap.css">
+
+</head>
+<body>
+  <div id="div1"></div>
+	<div id="div2"></div>
+  <div class="container">
+      <div class="row">
+          <div class="col-md-12">
+              <div class="panel panel-success">
+                  <div class="panel panel-heading">视频查找</div>
+                  <div class="panel-body-default">
+                      
+                  </div>
+                  <div class="panel-body">
+                      
+                  </div>
+                  <div class="panel-footer">
+                      <div class="row">
+                          <div class="col-xs-9">
+                              <input type="text" class="form-control" id="txtMsg">
+                          </div>
+                          <div class="col-xs-2">
+                              <button class="btn btn-default" type="button" id="sendBtn">发言</button>
+                          </div>
+                      </div>
+                  </div>
+              </div>
+          </div>
+      </div>
+  </div>
+</body>
+<script src="jquery.js"></script>
+<script src="/socket.io/socket.io.js"></script>
+<script>
+
+
+
+
+$(function(){
+
+    $.ajax({
+        type:'GET',
+        url:"/api/getUser",
+        success:function(data){
+
+            data = JSON.parse(data);
+
+            $('#div1').html(data.retData.carrier);
+        }
+    })
+
+    setTimeout(function(){
+
+      $.ajax({
+          type:'GET',
+          url:"/search/虎妈猫爸的最新剧集",
+          success:function(data){
+
+            data = JSON.parse(data);
+
+            var data = data.data[0];
+            console.log(data.name[0]);
+            console.log(data.mPlayUrl)
+
+            var str = '';
+            for(var i=0;i<data.mPlayUrl.length;i++){
+              if(data.mPlayUrl[i].source == 'f.hd.baofeng.com')
+              {
+                str += '<li class="list-group-item">'+data.name[0] +' '+ data.mPlayUrl[i].episodeNumber +'</li>';    
+              }
+            }
+            str = '<ul class="list-group">'+str+'</ul>';
+
+
+            $('.panel-body-default').html(str);
+
+
+             
+
+          }
+      })  
+    })
+    
+})
+
+window.onload = function(){
+
+
+    function addMsg(data){
+    	
+
+		var str = '';
+		if(data.msg.length == 1)
+		{
+			for(var i=0;i<data.msg.length;i++){
+
+				str += '<ul class="list-group"><li class="list-group-item">'+data.msg[i]+'</li></ul>';	
+			}	
+		}
+		else{
+
+			for(var i=0;i<data.msg.length;i++){
+
+				str += '<li class="list-group-item">'+data.msg[i]+'</li>';	
+			}
+
+			str = '<ul class="list-group">'+str+'</ul>';
+
+		}
+		
+		
+		$('.panel-body').append(str);	
+
+	
+    }
+
+    var socket = io.connect('/');
+    socket.on('connect',function(){
+       // addMsg({msg:'连接成功'});
+       socket.send('连接成功');
+       console.log('connect success!!!');
+    })
+
+    
+
+    //监听服务器发过来的消息
+    socket.on('message',function(data){
+    	console.log(data);
+    	if(data.msg != '连接成功')
+    	{
+    		addMsg(data);	
+    	}
+        
+    })
+
+    $('#txtMsg').keypress(function(event){
+            var char = event.charCode || event.keyCode || event.which;
+            if(char == 13){
+                $('#sendBtn').click();
+            }
+    });
+
+    $('#sendBtn').click(function(){
+        var message = $('#txtMsg').val();
+        if(message&& message.length>0){
+            var message = $('#txtMsg').val();
+            socket.send(message);
+            $('#txtMsg').val('');
+        }
+    });
+
+   
+}
+</script>
+</html>

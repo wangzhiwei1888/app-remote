@@ -16,6 +16,37 @@ app.get('/show1', function(req, res) {
 	res.sendFile(path.join(__dirname, 'show1.html'));
 });
 
+
+app.get('/data', function(req, res, next) {
+  
+
+  var req1 = http.get("http://report.yixin.com/BIReport/htmls/js/data.json",function(res1){
+  	 
+  	 console.log("Got response: " + res1.statusCode);
+
+  	res1.on('data', function (chunk) {
+	    
+	    chunk = JSON.parse(chunk);
+
+	    console.log(chunk);
+	    res.send(chunk);
+
+	});
+
+
+	req1.end();
+
+  }).on('error', function(e) {
+
+	console.log("Got error: " + e.message);
+
+  })
+
+});
+
+
+
+
 // var sign = require('./sign');
 
 // app.get('/api/getUser', function(req,res){

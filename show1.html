@@ -74,9 +74,15 @@
     </style>
 </head>
 <body>
+
+
+
+
     <div class="container">
         <canvas id="canvas"></canvas>
         <audio src="./music/01.mp3" id="audio" autoplay="autoplay"></audio>
+
+
     </div>
     <div class="controller">
         <div>
@@ -108,7 +114,7 @@
     </div>
 
     
-    <!-- <script src="jquery.js"></script> -->
+    <script src="jquery.js"></script>
     <script src="/socket.io/socket.io.js"></script>
     <script src="./vudio.js"></script>
     <script>
@@ -166,8 +172,116 @@
                 // var index = result.data;
                 console.log(musicList[index]);
                 
-                // $('#audio').attr('src',musicList[index].src);
-                $('#audio').src = musicList[index].src;
+                
+                if(index !=7){
+                    $('#yrdbobao').remove();
+                    // $('#audio').src = musicList[index].src;
+                    $('#audio').attr('src',musicList[index].src);
+                    
+                }
+                else{
+                    // $('#audio').src = "";
+                    $('#audio').attr('src','');
+                    $('#yrdbobao').remove();
+
+
+                    var getData = function (num,people){
+
+                        var num = num+'';
+                        var people = people || 0;
+                        var index = 0;
+                        if(people)
+                        {
+
+                            if(num.length<=4){
+                                var arr = ['人'];    
+                                while(num.length<4)
+                                {
+                                    num = '0'+num;
+                                }
+
+                            }
+                            if(num.length>4 && num.length<=8){
+                                var arr = ['万','人'];    
+                                while(num.length<8)
+                                {
+                                    num = '0'+num;
+                                }
+                            }
+                            if(num.length>8 && num.length<=12){
+                                var arr = ['亿','万','人'];
+                                while(num.length<12)
+                                {
+                                    num = '0'+num;
+                                }
+                            }
+                            
+                        }
+                        else{
+
+                            if(num.length<=4){
+                                var arr = ['元'];
+                                while(num.length<4)
+                                {
+                                    num = '0'+num;
+                                }
+                            }
+                            if(num.length>4 && num.length<=8){
+                                var arr = ['万','元'];
+                                while(num.length<8)
+                                {
+                                    num = '0'+num;
+                                }
+                            }
+                            if(num.length>8 && num.length<=12){
+                                var arr = ['亿','万','元'];
+                                while(num.length<12)
+                                {
+                                    num = '0'+num;
+                                }
+                            }
+                            
+                        }
+
+                        var toStr = num.replace(/(\d{4})/g,function($1){
+
+                            var value = $1+arr[index]
+                            index = index+1;
+                            return value;
+                            
+                        })
+
+                        toStr = toStr.replace(/^(0+)/,function($1){
+
+                            return '';
+
+                        })
+
+                        //console.log(toStr)
+                        return s=toStr;
+
+                    }
+                    var zhText = "";
+                    $.ajax({
+                        url:'/data',
+                        cache:false,
+                        complete: function (XHR, TS){ XHR = null; } 
+                    }).done(function(data){
+                        console.log(data);
+                        zhText = '宜人贷累计出借金额'+getData(data.loan)+',累计放款金额'+getData(data.fk)+',累计注册人数'+getData(data.people,1)+',当月出借金额 '+getData(data.m_loan)+',当月放款金额'+getData(data.m_fk)+',当月注册人数'+getData(data.m_people,1)+'。'
+                        
+                        console.log(zhText);
+                        zhText = encodeURI(zhText);
+                        var audioStr = '<audio autoplay="autoplay" id="yrdbobao"><source src="http://tts.baidu.com/text2audio?lan=zh&ie=UTF-8&spd=2&text='+zhText+'" type="audio/mpeg"><embed height="0" width="0" src="http://tts.baidu.com/text2audio?lan=zh&ie=UTF-8&spd=2&text='+zhText+'"></audio>';
+                        $("body").append(audioStr);
+
+                    })
+
+                     
+                    
+
+                }
+                
 
             }
 
@@ -212,8 +326,8 @@
             ]
         ];
         var prettify = false;
-        var canvas = $('#canvas');
-        var audio = $('#audio');
+        var canvas = $('#canvas')[0];
+        var audio = $('#audio')[0];
         var vudio = new Vudio(audio, canvas, {
             effect: 'waveform',
             accuracy: 256,
@@ -232,9 +346,9 @@
             }
         });
         vudio.dance();
-        function $(selector) {
-            return document.querySelector(selector);
-        }
+        // function $(selector) {
+        //     return document.querySelector(selector);
+        // }
         function changeColor(index) {
             vudio.setOption({
                 waveform : {

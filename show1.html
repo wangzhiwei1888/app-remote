@@ -180,10 +180,9 @@
                     
                 }
                 else{
-                    // $('#audio').src = "";
+                    
                     $('#audio').attr('src','');
                     $('#yrdbobao').remove();
-
 
                     var getData = function (num,people){
 
@@ -192,7 +191,6 @@
                         var index = 0;
                         if(people)
                         {
-
                             if(num.length<=4){
                                 var arr = ['人'];    
                                 while(num.length<4)
@@ -272,14 +270,11 @@
                         
                         console.log(zhText);
                         zhText = encodeURI(zhText);
-                        var audioStr = '<audio autoplay="autoplay" id="yrdbobao"><source src="http://tts.baidu.com/text2audio?lan=zh&ie=UTF-8&spd=2&text='+zhText+'" type="audio/mpeg"><embed height="0" width="0" src="http://tts.baidu.com/text2audio?lan=zh&ie=UTF-8&spd=2&text='+zhText+'"></audio>';
-                        $("body").append(audioStr);
+
+                        var yrdbobao = '<audio autoplay="autoplay" src="http://tts.baidu.com/text2audio?lan=zh&ie=UTF-8&spd=2&text='+zhText+'" id="yrdbobao"></audio>';
+                        $(".container").append(yrdbobao);
 
                     })
-
-                     
-                    
-
                 }
                 
 
@@ -346,9 +341,6 @@
             }
         });
         vudio.dance();
-        // function $(selector) {
-        //     return document.querySelector(selector);
-        // }
         function changeColor(index) {
             vudio.setOption({
                 waveform : {
